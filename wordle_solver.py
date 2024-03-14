@@ -2,8 +2,8 @@ import re
 import pandas as pd
 import numpy as np
 from collections import Counter, defaultdict
-import string
 import time
+import matplotlib.pylab as plt
 
 class WordleSolver:
     def __init__(self, possible_answers_df):
@@ -15,6 +15,7 @@ class WordleSolver:
         for i in range(5):
             self.letters[i] = None
         self.update_letter_counts()
+        self.guess = 0
 
     def update_letter_counts(self):
         self.letter_counts = Counter()
@@ -54,8 +55,19 @@ class WordleSolver:
     def make_guess(self):
         # check if self.letters is full. if yes, return that.
         # otherwise get guess.
+        self.guess += 1
         if any(value is None for value in self.letters.values()):
-            guess = self.get_guess()
+            if self.guess_df.shape[0] > 11:
+                if self.guess == 1:
+                    return "SLATE"
+                elif self.guess == 2:
+                    return "CORNI"
+                elif self.guess == 3:
+                    return "DUMPY"
+                else:
+                    guess = self.get_guess()
+            else:
+                guess = self.get_guess()
         else:
             guess = ''.join(self.letters.values())
         
@@ -77,9 +89,8 @@ class WordleSolver:
         self.update_letter_counts()
 
 
-
 def parse_answers():
-    with open('data/answers.txt') as file:
+    with open('output/answers.txt') as file:
         possible_answers = file.readlines()
 
     possible_answers_list = sorted([re.sub(r'[^A-Z]', '', t.upper()) for t in possible_answers[0].split(',')])
@@ -97,17 +108,12 @@ def get_response(guess, word):
     response = [None for _ in range(5)]
     green = []
     yellow = []
-    black = []
-    # get all the green ones first.
+
     for i in range(5):
         if guess[i] == word[i]:
             green.append(i)
-
-    for i in range(len(word)):
-        if guess[i] in word:
+        elif guess[i] in word:
             yellow.append(i)
-        else:
-            black.append(i)
     
     for i in range(5):
         if i in green:
@@ -131,7 +137,7 @@ with open("output/output.txt", 'w') as f:
         response = ""
         curr_ctr = 0
         solver = WordleSolver(possible_answers_df)
-        while response != 'GGGGG' and curr_ctr < 6:
+        while response != 'GGGGG':
             guess = solver.make_guess()
             response = get_response(guess, word)
             # print(f'Guess: {guess}, response: {response}, words remaining: {solver.guess_df.shape[0]}')
@@ -150,6 +156,22 @@ with open("output/output.txt", 'w') as f:
             unsolved_words.append(word)
 end = time.time()
 print(d)
+print(guess_counter / 2315)
+
+def plot():
+    lists = sorted(d.items(), key=lambda kv: kv[0], reverse=False)
+    x, y = zip(*lists) # unpack a list of pairs into two tuples
+
+    plt.bar(x, y)
+    plt.xlabel('Number of predictions')
+    plt.ylabel('Number of words')
+    for i in range(len(x)):
+        plt.text(x[i], y[i], str(y[i]), ha='center', va='bottom')
+    x_values = range(1, len(x) + 1)
+    plt.xticks(x_values, x)
+    plt.savefig('output/results.png')
+    plt.show()
+
 print(guess_counter / 2315)
 print(unsolved_words)
 print(f'time taken: {end - start}s')
