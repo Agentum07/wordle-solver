@@ -15,12 +15,6 @@ class WordleSolver:
         for i in range(5):
             self.letters[i] = None
         self.update_letter_counts()
-        # print(self.make_guess())
-        # print(self.letter_counts)
-        # self.update_green_letter('S', 0)
-        # self.get_letter_counts()
-        # print("123123123123123123123123123123123")
-        # print(self.letter_counts)
 
     def update_letter_counts(self):
         self.letter_counts = Counter()
