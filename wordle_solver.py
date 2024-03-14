@@ -121,24 +121,35 @@ def get_response(guess, word):
 guess_counter = 0
 unsolved_words = []
 start = time.time()
-# words = ['BATCH', 'HOUND', 'JAUNT', 'SAPPY']
-for word in possible_answers_df.iloc[:]['word']:
-# for word in words:
-    response = ""
-    curr_ctr = 0
-    solver = WordleSolver(possible_answers_df)
-    while response != 'GGGGG' and curr_ctr <= 6:
-        guess = solver.make_guess()
-        response = get_response(guess, word)
-        # print(f'Guess: {guess}, response: {response}, words remaining: {solver.guess_df.shape[0]}')
-        solver.process_response(guess, response)
-        curr_ctr += 1
-        guess_counter += 1
+words = ['GONER', 'HOUND', 'MATCH', 'ROGER']
+words = ['GONER']
+d = {}
+string_to_write = ""
+with open("output/output.txt", 'w') as f:
+    for word in possible_answers_df.iloc[:]['word']:
+        string_to_write = f'{word}: '
+        response = ""
+        curr_ctr = 0
+        solver = WordleSolver(possible_answers_df)
+        while response != 'GGGGG' and curr_ctr < 6:
+            guess = solver.make_guess()
+            response = get_response(guess, word)
+            # print(f'Guess: {guess}, response: {response}, words remaining: {solver.guess_df.shape[0]}')
+            solver.process_response(guess, response)
+            curr_ctr += 1
+            guess_counter += 1
+            string_to_write += f'{guess} '
 
-    if response != 'GGGGG':
-        unsolved_words.append(word)
+        string_to_write += "\n"
+        f.write(string_to_write)
+        if curr_ctr not in d.keys():
+            d[curr_ctr] = 1
+        else:
+            d[curr_ctr] += 1
+        if response != 'GGGGG':
+            unsolved_words.append(word)
 end = time.time()
-
+print(d)
 print(guess_counter / 2315)
 print(unsolved_words)
 print(f'time taken: {end - start}s')
