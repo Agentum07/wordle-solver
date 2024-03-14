@@ -100,8 +100,6 @@ def parse_answers():
     possible_answers_df['word'] = possible_answers_list
     return possible_answers_df
 
-possible_answers_df = parse_answers()
-
 def get_response(guess, word):
     guess = [c for c in guess]
     word = [c for c in word]
@@ -124,41 +122,7 @@ def get_response(guess, word):
             response[i] = 'B'
     return ''.join(response)
 
-guess_counter = 0
-unsolved_words = []
-start = time.time()
-words = ['GONER', 'HOUND', 'MATCH', 'ROGER']
-words = ['GONER']
-d = {}
-string_to_write = ""
-with open("output/output.txt", 'w') as f:
-    for word in possible_answers_df.iloc[:]['word']:
-        string_to_write = f'{word}: '
-        response = ""
-        curr_ctr = 0
-        solver = WordleSolver(possible_answers_df)
-        while response != 'GGGGG':
-            guess = solver.make_guess()
-            response = get_response(guess, word)
-            # print(f'Guess: {guess}, response: {response}, words remaining: {solver.guess_df.shape[0]}')
-            solver.process_response(guess, response)
-            curr_ctr += 1
-            guess_counter += 1
-            string_to_write += f'{guess} '
-
-        string_to_write += "\n"
-        f.write(string_to_write)
-        if curr_ctr not in d.keys():
-            d[curr_ctr] = 1
-        else:
-            d[curr_ctr] += 1
-        if response != 'GGGGG':
-            unsolved_words.append(word)
-end = time.time()
-print(d)
-print(guess_counter / 2315)
-
-def plot():
+def plot(d):
     lists = sorted(d.items(), key=lambda kv: kv[0], reverse=False)
     x, y = zip(*lists) # unpack a list of pairs into two tuples
 
@@ -172,6 +136,63 @@ def plot():
     plt.savefig('output/results.png')
     plt.show()
 
-print(guess_counter / 2315)
-print(unsolved_words)
-print(f'time taken: {end - start}s')
+def solve_all(possible_answers_df):
+    guess_counter = 0
+    unsolved_words = []
+    start = time.time()
+    d = {}
+    string_to_write = ""
+    with open("output/output.txt", 'w') as f:
+        for word in possible_answers_df.iloc[:]['word']:
+            string_to_write = f'{word}: '
+            response = ""
+            curr_ctr = 0
+            solver = WordleSolver(possible_answers_df)
+            while response != 'GGGGG':
+                guess = solver.make_guess()
+                response = get_response(guess, word)
+                # print(f'Guess: {guess}, response: {response}, words remaining: {solver.guess_df.shape[0]}')
+                solver.process_response(guess, response)
+                curr_ctr += 1
+                guess_counter += 1
+                string_to_write += f'{guess} '
+
+            string_to_write += "\n"
+            f.write(string_to_write)
+            if curr_ctr not in d.keys():
+                d[curr_ctr] = 1
+            else:
+                d[curr_ctr] += 1
+            if response != 'GGGGG':
+                unsolved_words.append(word)
+    end = time.time()
+    print(d)
+    print(guess_counter / 2315)
+    print(guess_counter / 2315)
+    print(unsolved_words)
+    print(f'time taken: {end - start}s')
+    print((end - start)/2315)
+    plot(d)
+
+
+def main():
+    possible_answers_df = parse_answers()
+    solver = WordleSolver(possible_answers_df)
+    print("Welcome to Wordle solver! I will solve your game for you.")
+    print("Enter the feedback in the form of 'GYBBY', where ")
+    print("B stands for black/grey.")
+    print("Y stands for yellow.")
+    print("G stands for green.")
+
+    curr_input = ""
+    while curr_input != 'GGGGG':
+        guess = solver.make_guess()
+        print(f"Hmmm, try {guess}")
+        curr_input = input("Enter the feedback: ")
+        solver.process_response(guess, curr_input)
+        print(f"Words left: {solver.guess_df.shape[0]}")
+
+    print("Great, we solved it!")
+
+if __name__ == "__main__":
+    main()
