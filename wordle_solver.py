@@ -53,6 +53,9 @@ class WordleSolver:
     def update_yellow_letter(self, letter, pos):
         # remove the letter from pos + 1 column in the guess df.
         self.guess_df = self.guess_df[self.guess_df[f'letter_{pos + 1}'] != letter]
+        rows_to_drop = self.guess_df.apply(lambda row: letter not in row.values, axis=1)
+        self.guess_df = self.guess_df[~rows_to_drop]
+
 
     def make_guess(self):
         # check if self.letters is full. if yes, return that.
@@ -74,10 +77,10 @@ class WordleSolver:
                 self.update_green_letter(guess[i], i)
             elif response[i] == 'Y':
                 self.update_yellow_letter(guess[i], i)
-                self.update_letter_counts()
             elif response[i] == 'B':
                 self.update_black_letter(guess[i])
-                self.update_letter_counts()
+
+        self.update_letter_counts()
 
 
 
@@ -86,7 +89,6 @@ def parse_answers():
         possible_answers = file.readlines()
 
     possible_answers_list = sorted([re.sub(r'[^A-Z]', '', t.upper()) for t in possible_answers[0].split(',')])
-    # print(len(possible_answers_list), possible_answers_list[:5])
 
     possible_answers_arr = np.array([list(word) for word in possible_answers_list])
     possible_answers_df = pd.DataFrame(data=possible_answers_arr, columns=[f'letter_{i+1}' for i in range(5)])
@@ -96,7 +98,6 @@ def parse_answers():
 possible_answers_df = parse_answers()
 
 def get_response(guess, word):
-    print(f'Guess: {guess}, word: {word}')
     guess = [c for c in guess]
     word = [c for c in word]
     response = [None for _ in range(5)]
@@ -107,15 +108,9 @@ def get_response(guess, word):
     for i in range(5):
         if guess[i] == word[i]:
             green.append(i)
-    print(green)
-    print(guess)
-    print(word)
-    for i in green:
-        guess.pop(i)
-        word.pop(i)
 
     for i in range(len(word)):
-        if guess[i] in word and guess[i] != word[i]:
+        if guess[i] in word:
             yellow.append(i)
         else:
             black.append(i)
@@ -133,37 +128,23 @@ guess_counter = 0
 unsolved_words = []
 start = time.time()
 # words = ['BATCH', 'HOUND', 'JAUNT', 'SAPPY']
-words = ['BATCH']
-# for word in possible_answers_df.iloc[:]['word']:
-for word in words:
+for word in possible_answers_df.iloc[:]['word']:
+# for word in words:
     response = ""
     curr_ctr = 0
     solver = WordleSolver(possible_answers_df)
-    while response != 'GGGGG':
+    while response != 'GGGGG' and curr_ctr <= 6:
         guess = solver.make_guess()
         response = get_response(guess, word)
-        print(f'Guess: {guess}, response: {response}, words remaining: {solver.guess_df.shape[0]}')
+        # print(f'Guess: {guess}, response: {response}, words remaining: {solver.guess_df.shape[0]}')
         solver.process_response(guess, response)
         curr_ctr += 1
         guess_counter += 1
 
     if response != 'GGGGG':
         unsolved_words.append(word)
-    else:
-        print(f'guessed {word} in {curr_ctr} tries!')
-    print()
 end = time.time()
 
-print(guess_counter / 4)
+print(guess_counter / 2315)
 print(unsolved_words)
 print(f'time taken: {end - start}s')
-# print(possible_answers_df.shape[0])
-# print(solver.make_guess())
-# solver.process_response("SLATE", "GBBBG")
-# print(solver.make_guess())
-# solver.process_response("SHONE", "GBBYG")
-# print(solver.make_guess())
-# solver.process_response("SPICE", "GBYGG")
-# print(solver.make_guess())
-# solver.process_response("SINCE", "GGGGG")
-# print(solver.make_guess())
