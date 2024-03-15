@@ -15,7 +15,7 @@ I created a solver from scratch that uses a simple algorithm built upon the basi
 1. Run wordle_solver.py: `python wordle_solver.py`.
 2. Use the prediction provided by the algorithm.
 3. Enter the feedback in the form of "GYBBY", where
-  * B stands for black/grey.
-  * Y stands for yellow.
-  * G stands for green.
+    * B stands for black/grey.
+    * Y stands for yellow.
+    * G stands for green.
 Repeat until you win.
