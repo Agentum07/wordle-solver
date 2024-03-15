@@ -16,6 +16,7 @@ class WordleSolver:
             self.letters[i] = None
         self.update_letter_counts()
         self.guess = 0
+        self.yellow_letters = set()
 
     def update_letter_counts(self):
         self.letter_counts = Counter()
@@ -39,17 +40,21 @@ class WordleSolver:
     def update_green_letter(self, letter, pos):
         self.letters[pos] = letter
         self.guess_df = self.guess_df[self.guess_df[f'letter_{pos + 1}'] == letter]
+        if letter in self.yellow_letters:
+            self.yellow_letters.remove(letter)
 
     def update_black_letter(self, letter):
         # remove the letter from all rows in the self.guess_df
-        self.guess_df.replace(letter, pd.NA, inplace=True)
-        self.guess_df.dropna(inplace=True)        
+        if letter not in self.yellow_letters:
+            self.guess_df.replace(letter, pd.NA, inplace=True)
+            self.guess_df.dropna(inplace=True)        
 
     def update_yellow_letter(self, letter, pos):
         # remove the letter from pos + 1 column in the guess df.
         self.guess_df = self.guess_df[self.guess_df[f'letter_{pos + 1}'] != letter]
         rows_to_drop = self.guess_df.apply(lambda row: letter not in row.values, axis=1)
         self.guess_df = self.guess_df[~rows_to_drop]
+        self.yellow_letters.add(letter)
 
 
     def make_guess(self):
