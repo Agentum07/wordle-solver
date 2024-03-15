@@ -4,6 +4,7 @@
 I created a solver from scratch that uses a simple algorithm built upon the basic rules of the game and a couple of predetermined useful predictions to solve Wordle. There are no search/decision trees, learning models or intelligent agents; just plain old DSA. The algo has still managed to reach avg. levels of predictions that are less than 0.21 away from the [best known automated solver (avg. 3.42)](https://jonathanolson.net/wordle-solver/).
 
 ## Statistics
+* Total words: 2315
 * Average number of predictions per word: 3.6358
 * Number of words failed (i.e took more than 6 guesses): 10
 * Accuracy: **99.56%**
