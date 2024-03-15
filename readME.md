@@ -19,3 +19,6 @@ I created a solver from scratch that uses a simple algorithm built upon the basi
     * Y stands for yellow.
     * G stands for green.
 Repeat until you win.
+
+## Demo
+![demo video](demo.mov)
