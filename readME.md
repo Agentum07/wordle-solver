@@ -21,5 +21,5 @@ I created a solver from scratch that uses a simple algorithm built upon the basi
 Repeat until you win.
 
 ## Demo
-![demo video](https://github.com/Agentum07/wordle-solver/assets/62797335/e32c8ea5-289a-4773-88a2-fec7e8ea7c6f)
+[demo video](https://github.com/Agentum07/wordle-solver/assets/62797335/e32c8ea5-289a-4773-88a2-fec7e8ea7c6f)
 
