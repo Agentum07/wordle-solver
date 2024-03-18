@@ -27,4 +27,4 @@ Repeat until you win.
 
 ## Future Plans
 * Create frontend to remove running python script.
-* 
+* Create a telegram bot to automatically solve the most recent wordle.
