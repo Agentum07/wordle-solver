@@ -25,3 +25,6 @@ Repeat until you win.
 ## Demo
 [demo video](https://github.com/Agentum07/wordle-solver/assets/62797335/e32c8ea5-289a-4773-88a2-fec7e8ea7c6f)
 
+## Future Plans
+* Create frontend to remove running python script.
+* 
